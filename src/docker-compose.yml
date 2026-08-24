@@ -9,6 +9,8 @@ services:
       
   eshopdb:
     image: postgres:16-alpine
+  seq:
+    image: datalust/seq:latest
 
 # This must be separated from the image property
 volumes:

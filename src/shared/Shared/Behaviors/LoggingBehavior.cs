@@ -1,5 +1,8 @@
-﻿using MediatR;
+﻿using System.Diagnostics;
+using MediatR;
 using Microsoft.Extensions.Logging;
+
+namespace Shared.Behaviors;
 
 public class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : notnull, IRequest<TResponse>
@@ -13,11 +16,21 @@ public class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, 
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Handling {RequestName}", typeof(TRequest).Name);
+        var requestName = typeof(TRequest).Name;
+        _logger.LogInformation("[START] Handling {RequestName}", requestName);
 
+        var timer = Stopwatch.StartNew();
         var response = await next();
+        timer.Stop();
 
-        _logger.LogInformation("Handled {RequestName}", typeof(TRequest).Name);
+        var timeTaken = timer.Elapsed;
+        if (timeTaken.TotalSeconds > 3)
+        {
+            // Flags performance bottlenecks in long-running queries or database transactions
+            _logger.LogWarning("[PERFORMANCE] {RequestName} took {TimeTaken} to execute.", requestName, timeTaken);
+        }
+
+        _logger.LogInformation("[END] Handled {RequestName}", requestName);
 
         return response;
     }

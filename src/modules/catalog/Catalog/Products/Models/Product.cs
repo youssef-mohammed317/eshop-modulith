@@ -79,4 +79,20 @@ public class Product : Aggregate<Guid>
     {
         _categories.Remove(category);
     }
+    public void ReplaceCategories(IEnumerable<string> newCategories)
+    {
+        _categories.Clear();
+
+        foreach (var category in newCategories)
+        {
+            if (string.IsNullOrWhiteSpace(category))
+                throw new ArgumentException("Category cannot be empty.");
+
+            if (!_categories.Contains(category))
+            {
+                _categories.Add(category);
+            }
+        }
+    }
+
 }

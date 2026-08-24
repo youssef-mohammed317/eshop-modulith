@@ -2,12 +2,7 @@
 
 namespace Shared.CQRS;
 
-public interface ICommand : IRequest
-{
-}
+// Commands
+public interface ICommand : IRequest<Unit> { }
 
-public interface ICommand<out TResponse> : ICommand, IRequest<TResponse>
-    where TResponse : notnull
-{
-}
-
+public interface ICommand<out TResponse> : IRequest<TResponse> where TResponse : notnull { }
