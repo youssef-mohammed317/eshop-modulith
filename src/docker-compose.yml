@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  api:
+    image: ${DOCKER_REGISTRY-}api
+    build:
+      context: .
+      dockerfile: bootstrapper/Api/Dockerfile
+      
+  eshopdb:
+    image: postgres:16-alpine
+
+# This must be separated from the image property
+volumes:
+  postgres_eshopdb:
