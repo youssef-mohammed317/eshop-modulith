@@ -1,10 +1,12 @@
-﻿using MediatR;
+﻿using MassTransit;
 using Microsoft.Extensions.Logging;
-using Catalog.Products.Events;
+
 
 namespace Catalog.Products.Features.EventHandlers;
 
-public class ProductCreatedEventHandler(ILogger<ProductCreatedEventHandler> logger)
+public class ProductCreatedEventHandler(
+    ILogger<ProductCreatedEventHandler> logger,
+    IBus bus) // Inject MassTransit
     : INotificationHandler<ProductCreatedEvent>
 {
     public async Task Handle(ProductCreatedEvent notification, CancellationToken cancellationToken)
@@ -14,9 +16,17 @@ public class ProductCreatedEventHandler(ILogger<ProductCreatedEventHandler> logg
             notification.product.Id,
             notification.product.Name);
 
-        // 2. Add business logic here
-        // e.g., mapping to an Integration Event and pushing to a message broker
+        // 2. Map the Rich Domain Model to the Integration Event
+        var integrationEvent = new ProductCreatedIntegrationEvent(
+            ProductId: notification.product.Id,
+            Name: notification.product.Name,
+            Category: notification.product.Category.ToList(),
+            Description: notification.product.Description,
+            ImageFile: notification.product.ImageFile,
+            Price: notification.product.Price
+        );
 
-        await Task.CompletedTask;
+        // 3. Publish to the message broker
+        await bus.Publish(integrationEvent, cancellationToken);
     }
 }

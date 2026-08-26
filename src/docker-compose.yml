@@ -15,7 +15,10 @@ services:
 
   redis:
     image: redis:latest
-
+  
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
 # This must be separated from the image property
 volumes:
   postgres_eshopdb:
+  rabbitmq_data:

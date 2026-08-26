@@ -39,4 +39,13 @@ public class ShoppingCartItem : Entity<Guid>
 
         Quantity = newQuantity;
     }
+
+    internal void UpdatePrice(decimal newPrice)
+    {
+
+        if (newPrice < 0)
+            throw new ArgumentException("newPrice cant be negative");
+
+        Price = newPrice;
+    }
 }

@@ -67,4 +67,14 @@ public class ShoppingCart : Aggregate<Guid>
     {
         _items.Clear();
     }
+
+    // Inside Basket.Basket.Models.ShoppingCart
+    public void UpdateItemPrice(Guid productId, decimal newPrice)
+    {
+        var item = _items.FirstOrDefault(x => x.ProductId == productId);
+        if (item != null)
+        {
+            item.UpdatePrice(newPrice); // Ensure you add this internal method to ShoppingCartItem!
+        }
+    }
 }

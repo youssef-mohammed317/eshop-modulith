@@ -1,4 +1,5 @@
 using Serilog;
+using Shared.Messaging.Extensions;
 
 // 1. Initial bootstrap logger to catch startup issues
 Log.Logger = new LoggerConfiguration()
@@ -12,12 +13,10 @@ try
     builder.Host.UseSerilog((context, services, configuration) => configuration
         .ReadFrom.Configuration(context.Configuration)
         .ReadFrom.Services(services));
-
-    builder.Services.AddMediatRService(
-        typeof(CatalogModule).Assembly,
-        typeof(BasketModule).Assembly,
-        typeof(OrderingModule).Assembly
-    );
+    var orderAssembly = typeof(OrderingModule).Assembly;
+    var catalogAssembly = typeof(CatalogModule).Assembly;
+    var basketAssembly = typeof(BasketModule).Assembly;
+    builder.Services.AddMediatRService(catalogAssembly, basketAssembly, orderAssembly);
 
     builder.Services.AddCarter();
 
@@ -25,6 +24,8 @@ try
     {
         options.Configuration = builder.Configuration.GetConnectionString("Redis");
     });
+
+    builder.Services.AddMessageBrokerWithAssemblies(builder.Configuration, catalogAssembly, basketAssembly);
 
     builder.Services
         .AddCatalogModule(builder.Configuration)

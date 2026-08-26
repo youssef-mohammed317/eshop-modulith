@@ -8,6 +8,7 @@
 
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\..\shared\Shared.Messaging\Shared.Messaging.csproj" />
 		<ProjectReference Include="..\..\..\shared\Shared\Shared.csproj" />
 		<ProjectReference Include="..\..\catalog\Catalog.Contracts\Catalog.Contracts.csproj" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
@@ -17,6 +18,7 @@
 
 	<ItemGroup>
 		<Folder Include="Dtos\" />
+		<Folder Include="Features\UpdateItemPriceInBasket\" />
 	</ItemGroup>
 
 </Project>

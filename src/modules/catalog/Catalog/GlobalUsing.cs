@@ -15,3 +15,4 @@ global using Shared.Pagination;
 global using Catalog.Contracts.Products.Features.GetProductById;
 global using Catalog.Contracts.Products.Dtos;
 global using Catalog.Products.Extensions;
+global using Shared.Messaging.Events;

@@ -8,6 +8,10 @@ services:
       - ASPNETCORE_HTTPS_PORTS=8081
       - ConnectionStrings__Database=Host=eshopdb;Port=5432;Database=eshopdb;Username=postgres;Password=postgres;
       - ConnectionStrings__Redis=Host=redis:6379
+      # RabbitMQ Configuration
+      - MessageBroker__Host=rabbitmq
+      - MessageBroker__Username=guest
+      - MessageBroker__Password=guest
     ports:
       - "5000:8080"
       - "5050:8081"
@@ -49,3 +53,18 @@ services:
     restart: always
     ports:
       - "6380:6379"
+
+  rabbitmq:
+    container_name: eshop_rabbitmq
+    restart: always
+    hostname: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      - "5672:5672"   # The standard AMQP protocol port used by MassTransit
+      - "15672:15672" # The Management UI port
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+
