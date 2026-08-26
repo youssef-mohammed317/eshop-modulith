@@ -1,4 +1,4 @@
-﻿namespace Shared.Exceptions;
+﻿namespace Shared.Contracts.Exceptions;
 
 public class BadRequestException : Exception
 {

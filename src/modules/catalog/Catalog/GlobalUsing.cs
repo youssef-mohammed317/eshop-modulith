@@ -1,7 +1,7 @@
 ﻿global using Catalog.Products.Models;
 global using Shared.DDD;
-global using Shared.CQRS;
-global using Shared.Exceptions;
+global using Shared.Contracts.CQRS;
+global using Shared.Contracts.Exceptions;
 global using Catalog.Products.Events;
 global using FluentValidation;
 global using Carter;
@@ -11,5 +11,7 @@ global using Microsoft.AspNetCore.Builder;
 global using Microsoft.AspNetCore.Http;
 global using Microsoft.AspNetCore.Routing;
 global using Catalog.Data;
-global using Catalog.Products.Dtos;
 global using Shared.Pagination;
+global using Catalog.Contracts.Products.Features.GetProductById;
+global using Catalog.Contracts.Products.Dtos;
+global using Catalog.Products.Extensions;

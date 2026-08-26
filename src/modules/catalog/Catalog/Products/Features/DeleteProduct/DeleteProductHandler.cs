@@ -1,4 +1,6 @@
-﻿namespace Catalog.Products.Features.DeleteProduct;
+﻿using Catalog.Contracts.Products.Exceptions;
+
+namespace Catalog.Products.Features.DeleteProduct;
 
 public record DeleteProductCommand(Guid Id)
     : ICommand<DeleteProductResult>;
@@ -26,7 +28,7 @@ public class DeleteProductCommandHandler(CatalogDbContext context)
 
         if (product is null)
         {
-            throw new Exception($"Product with Id {command.Id} not found");
+            throw new ProductNotFoundException(command.Id);
         }
 
         // 2. Remove it from tracking

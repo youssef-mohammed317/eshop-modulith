@@ -19,7 +19,7 @@ public class AddItemToBasketCommandValidator : AbstractValidator<AddItemToBasket
         RuleFor(x => x.ShoppingCartItem.ProductName).NotEmpty().WithMessage("ProductName is required");
     }
 }
-public class AddItemToBasketCommandHandler(IBasketRepository repository)
+public class AddItemToBasketCommandHandler(IBasketRepository repository, ISender sender)
     : ICommandHandler<AddItemToBasketCommand, AddItemToBasketResult>
 {
     public async Task<AddItemToBasketResult> Handle(AddItemToBasketCommand command, CancellationToken cancellationToken)
@@ -31,12 +31,22 @@ public class AddItemToBasketCommandHandler(IBasketRepository repository)
             cart = ShoppingCart.Create(Guid.NewGuid(), command.UserName);
         }
 
+        var result = await sender.Send(new GetProductByIdQuery(command.ShoppingCartItem.ProductId));
+
+        if (result?.Product == null)
+        {
+            throw new ProductNotFoundException(command.ShoppingCartItem.ProductId);
+        }
+
+
         cart.AddItem(
             command.ShoppingCartItem.ProductId,
             command.ShoppingCartItem.Quantity,
             command.ShoppingCartItem.Color,
-            command.ShoppingCartItem.Price,
-            command.ShoppingCartItem.ProductName);
+            result.Product.Price,
+            result.Product.Name);
+        //command.ShoppingCartItem.Price,
+        //command.ShoppingCartItem.ProductName);
 
         // This stores the basket in EF Core AND updates Redis
         await repository.StoreBasketAsync(cart, cancellationToken);

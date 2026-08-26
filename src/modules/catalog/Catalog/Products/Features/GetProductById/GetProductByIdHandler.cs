@@ -1,19 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Catalog.Contracts.Products.Exceptions;
+using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Catalog.Products.Features.GetProductById;
 
-public record GetProductByIdQuery(Guid Id) : IQuery<GetProductByIdResult>;
+//public record GetProductByIdQuery(Guid Id) : IQuery<GetProductByIdResult>;
 
-public record GetProductByIdResult(ProductDto Product);
-
-public class GetProductByIdQueryValidator : AbstractValidator<GetProductByIdQuery>
-{
-    public GetProductByIdQueryValidator()
-    {
-        RuleFor(x => x.Id)
-            .NotEmpty().WithMessage("Product Id is required");
-    }
-}
+//public record GetProductByIdResult(ProductDto Product);
 
 public class GetProductByIdQueryHandler(CatalogDbContext context)
     : IQueryHandler<GetProductByIdQuery, GetProductByIdResult>
@@ -27,11 +20,11 @@ public class GetProductByIdQueryHandler(CatalogDbContext context)
 
         if (product is null)
         {
-            throw new Exception($"Product with Id {query.Id} not found");
+            throw new ProductNotFoundException(query.Id);
         }
 
         // Map single entity using the static factory method
-        var productDto = ProductDto.FromDomain(product);
+        var productDto = product.FromDomain();
 
         return new GetProductByIdResult(productDto);
     }

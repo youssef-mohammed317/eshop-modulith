@@ -1,4 +1,6 @@
-﻿namespace Catalog.Products.Features.UpdateProduct;
+﻿using Catalog.Contracts.Products.Exceptions;
+
+namespace Catalog.Products.Features.UpdateProduct;
 
 public record UpdateProductCommand(ProductDto ProductDto)
     : ICommand<UpdateProductResult>;
@@ -44,7 +46,7 @@ public class UpdateProductCommandHandler(CatalogDbContext context)
         if (product is null)
         {
             // Ideally, throw a custom NotFoundException here so a global exception handler can return a 404
-            throw new Exception($"Product with Id {productDto.Id} not found");
+            throw new ProductNotFoundException(productDto.Id);
         }
 
         // 2. Update properties using the Rich Domain behavior methods (preserves encapsulation)

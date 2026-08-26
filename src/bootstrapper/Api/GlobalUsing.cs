@@ -3,4 +3,4 @@ global using Catalog;
 global using Ordering;
 global using Carter;
 global using Shared.Data;
-global using Shared.Exceptions.Handler;
+global using Shared.Contracts.Exceptions.Handler;

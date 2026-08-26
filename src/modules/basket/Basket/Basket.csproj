@@ -9,13 +9,14 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\shared\Shared\Shared.csproj" />
+		<ProjectReference Include="..\..\catalog\Catalog.Contracts\Catalog.Contracts.csproj" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
 		<PackageReference Include="Scrutor" Version="7.0.0" />
 	</ItemGroup>
 
 
 	<ItemGroup>
-	  <Folder Include="Dtos\" />
+		<Folder Include="Dtos\" />
 	</ItemGroup>
 
 </Project>

@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Shared.CQRS;
+namespace Shared.Contracts.CQRS;
 
 // Queries
 public interface IQuery<out TResponse> : IRequest<TResponse> where TResponse : notnull { }

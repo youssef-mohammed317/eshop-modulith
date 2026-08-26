@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Collections;
 
 namespace Catalog.Products.Features.GetProducts;
 

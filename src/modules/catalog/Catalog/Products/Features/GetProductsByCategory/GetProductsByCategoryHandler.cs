@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Catalog.Products.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.Products.Features.GetProductsByCategory;
 
