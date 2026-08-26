@@ -9,9 +9,10 @@ public class CatalogDbContext(DbContextOptions<CatalogDbContext> options) : DbCo
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        builder.HasDefaultSchema("catalog");
+
         base.OnModelCreating(builder);
 
-        builder.HasDefaultSchema("catalog");
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
     }

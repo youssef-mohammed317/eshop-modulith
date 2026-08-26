@@ -1,0 +1,16 @@
+﻿global using Basket.Basket.Dtos;
+global using Basket.Basket.Exceptions;
+global using Basket.Basket.Models;
+global using Basket.Data;
+global using Carter;
+global using FluentValidation;
+global using Mapster;
+global using MediatR;
+global using Microsoft.AspNetCore.Builder;
+global using Microsoft.AspNetCore.Http;
+global using Microsoft.AspNetCore.Routing;
+global using Shared.CQRS;
+global using Shared.DDD;
+global using Shared.Exceptions;
+global using Shared.Pagination;
+global using Basket.Data.Repository;

@@ -1,0 +1,24 @@
+﻿using System.Reflection;
+using Microsoft.EntityFrameworkCore;
+
+namespace Basket.Data;
+
+public class BasketDbContext : DbContext
+{
+    public BasketDbContext(DbContextOptions<BasketDbContext> options) : base(options)
+    {
+    }
+
+    public DbSet<ShoppingCart> ShoppingCarts => Set<ShoppingCart>();
+    public DbSet<ShoppingCartItem> ShoppingCartItems => Set<ShoppingCartItem>();
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        builder.HasDefaultSchema("basket");
+
+        base.OnModelCreating(builder);
+
+        // This line automatically finds ShoppingCartConfiguration and ShoppingCartItemConfiguration
+        builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+    }
+}

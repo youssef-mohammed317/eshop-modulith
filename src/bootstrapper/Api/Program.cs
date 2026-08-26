@@ -21,6 +21,10 @@ try
 
     builder.Services.AddCarter();
 
+    builder.Services.AddStackExchangeRedisCache(options =>
+    {
+        options.Configuration = builder.Configuration.GetConnectionString("Redis");
+    })
 
     builder.Services
         .AddCatalogModule(builder.Configuration)

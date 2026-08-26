@@ -10,6 +10,12 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\shared\Shared\Shared.csproj" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+		<PackageReference Include="Scrutor" Version="7.0.0" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <Folder Include="Dtos\" />
 	</ItemGroup>
 
 </Project>
