@@ -1,4 +1,5 @@
-﻿using Basket.Data;
+﻿using Basket.BackgroundJobs;
+using Basket.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +14,7 @@ public static class BasketModule
         services.AddScoped<IBasketRepository, BasketRepository>();
         services.Decorate<IBasketRepository, CachedBasketRepository>(); // Requires Scrutor package
         services.AddDbContextService<BasketDbContext>(configuration);
+        services.AddHostedService<OutboxProcessorBackgroundService>();
         return services;
     }
     public static IApplicationBuilder UseBasketModule(this IApplicationBuilder app)

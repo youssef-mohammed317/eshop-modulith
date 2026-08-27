@@ -6,15 +6,18 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
+      # Database and Cache
       - ConnectionStrings__Database=Host=eshopdb;Port=5432;Database=eshopdb;Username=postgres;Password=postgres;
-      - ConnectionStrings__Redis=Host=redis:6379
+      - ConnectionStrings__Redis=redis:6379
       # RabbitMQ Configuration
       - MessageBroker__Host=rabbitmq
       - MessageBroker__Username=guest
       - MessageBroker__Password=guest
+      # Override Serilog to point to the Seq container in the Docker network
+      - Serilog__WriteTo__2__Args__serverUrl=http://seq:5341
     ports:
-      - "5000:8080"
-      - "5050:8081"
+      - "6000:8080"
+      - "6060:8081"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
@@ -22,13 +25,16 @@ services:
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
     depends_on:
       - eshopdb
+      - rabbitmq
+      - redis
+      - seq
   
   eshopdb:
     container_name: eshopdb
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: eshopdb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=eshopdb
     restart: always
     ports:
       - "5433:5432"
@@ -44,12 +50,10 @@ services:
       - "5341:5341"
       - "9091:80"
     volumes:
-      - postgres_eshopdb:/var/lib/postgresql/data
+      - seq_data:/data
 
   redis:
     container_name: redis
-    environment:
-      - ACCEPT_EULA=Y
     restart: always
     ports:
       - "6380:6379"
@@ -66,5 +70,3 @@ services:
       - "15672:15672" # The Management UI port
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
-
-

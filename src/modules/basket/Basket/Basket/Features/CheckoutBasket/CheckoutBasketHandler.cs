@@ -1,6 +1,12 @@
-﻿// Location: Basket/Features/CheckoutBasket/CheckoutBasketHandler.cs
+﻿using Basket.Data; // Ensure this matches your namespace for BasketDbContext
+using Basket.Data.Repository;
 using BuildingBlocks.Messaging.Events;
+using FluentValidation;
+using Mapster;
 using MassTransit;
+using Shared.CQRS;
+using Shared.Messaging.Outbox;
+using System.Text.Json;
 
 namespace Basket.Features.CheckoutBasket;
 
@@ -19,35 +25,58 @@ public class CheckoutBasketCommandValidator : AbstractValidator<CheckoutBasketCo
 }
 public class CheckoutBasketCommandHandler(
     IBasketRepository repository,
-    IBus bus)
+    BasketDbContext dbContext) // IBus removed since the background worker will handle publishing
     : ICommandHandler<CheckoutBasketCommand, CheckoutBasketResult>
 {
     public async Task<CheckoutBasketResult> Handle(CheckoutBasketCommand command, CancellationToken cancellationToken)
     {
-        // 1. Retrieve the existing basket
-        var basket = await repository.GetBasketAsync(command.BasketCheckoutDto.UserName, cancellationToken);
+        // Start the EF Core database transaction
+        await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
 
-        if (basket is null)
+        try
         {
+            // 1. Retrieve the existing basket
+            var basket = await repository.GetBasketAsync(command.BasketCheckoutDto.UserName, cancellationToken);
+
+            if (basket is null)
+            {
+                return new CheckoutBasketResult(false);
+            }
+
+            // 2. Map the incoming DTO to your Integration Event
+            var eventMessage = command.BasketCheckoutDto.Adapt<BasketCheckoutIntegrationEvent>();
+
+            // 3. SECURITY: Overwrite the TotalPrice with the trusted backend calculation
+            eventMessage.TotalPrice = basket.Items.Sum(x => x.Price * x.Quantity);
+
+            // 4. Serialize and save to the Outbox
+            var outboxMessage = new OutboxMessage
+            {
+                Id = Guid.NewGuid(),
+                Type = eventMessage.GetType().AssemblyQualifiedName ?? eventMessage.GetType().Name,
+                Content = JsonSerializer.Serialize(eventMessage),
+                OccurredOn = DateTime.UtcNow,
+                ProcessedOn = null // Stays null until the background worker publishes it
+            };
+
+            dbContext.OutboxMessages.Add(outboxMessage);
+
+            // 5. Delete the basket since the checkout process has started
+            await repository.DeleteBasketAsync(command.BasketCheckoutDto.UserName, cancellationToken);
+
+            // 6. Commit the deletion and the outbox message to the database
+            await repository.SaveChangesAsync(command.BasketCheckoutDto.UserName, cancellationToken);
+
+            // 7. Commit the transaction
+            await transaction.CommitAsync(cancellationToken);
+
+            return new CheckoutBasketResult(true);
+        }
+        catch
+        {
+            // Rollback if any step fails
+            await transaction.RollbackAsync(cancellationToken);
             return new CheckoutBasketResult(false);
         }
-
-        // 2. Map the incoming DTO to your Integration Event
-        var eventMessage = command.BasketCheckoutDto.Adapt<BasketCheckoutIntegrationEvent>();
-
-        // 3. SECURITY: Overwrite the TotalPrice with the trusted backend calculation
-        // This prevents users from manipulating the price on the frontend
-        eventMessage.TotalPrice = basket.Items.Sum(x => x.Price * x.Quantity);
-
-        // 4. Publish the Integration Event to RabbitMQ
-        await bus.Publish(eventMessage, cancellationToken);
-
-        // 5. Delete the basket since the checkout process has started
-        await repository.DeleteBasketAsync(command.BasketCheckoutDto.UserName, cancellationToken);
-
-        // Commit the deletion to the database
-        await repository.SaveChangesAsync(command.BasketCheckoutDto.UserName, cancellationToken);
-
-        return new CheckoutBasketResult(true);
     }
 }
