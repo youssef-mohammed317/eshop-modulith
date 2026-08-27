@@ -6,7 +6,7 @@ namespace BuildingBlocks.Messaging.Events;
 /// Event published when a user checks out their basket.
 /// Subscribed by the Ordering microservice to create a new order.
 /// </summary>
-public record BasketCheckoutEvent : IntegrationEvent
+public record BasketCheckoutIntegrationEvent : IntegrationEvent
 {
     // User & Basket Info
     public string UserName { get; set; } = default!;

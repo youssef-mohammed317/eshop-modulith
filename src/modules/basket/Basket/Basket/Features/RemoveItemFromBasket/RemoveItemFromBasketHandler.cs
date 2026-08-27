@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Basket.Features.RemoveItemFromBasket;
+namespace Basket.Basket.Features.AddItemToBasket;
 
 public record RemoveItemFromBasketCommand(string UserName, Guid ProductId) : ICommand<RemoveItemFromBasketResult>;
 public record RemoveItemFromBasketResult(bool IsSuccess);

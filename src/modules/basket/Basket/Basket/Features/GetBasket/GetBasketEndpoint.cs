@@ -1,4 +1,4 @@
-﻿namespace Basket.Features.GetBasket;
+﻿namespace Basket.Basket.Features.AddItemToBasket;
 
 public record GetBasketResponse(ShoppingCartDto Cart);
 

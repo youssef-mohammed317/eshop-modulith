@@ -1,4 +1,4 @@
-﻿namespace Basket.Features.DeleteBasket;
+﻿namespace Basket.Basket.Features.AddItemToBasket;
 
 public record DeleteBasketResponse(bool IsSuccess);
 

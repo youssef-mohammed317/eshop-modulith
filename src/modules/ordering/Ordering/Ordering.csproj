@@ -7,8 +7,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\..\shared\Shared.Messaging\Shared.Messaging.csproj" />
 		<ProjectReference Include="..\..\..\shared\Shared\Shared.csproj" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="Dtos\" />
 	</ItemGroup>
 
 </Project>

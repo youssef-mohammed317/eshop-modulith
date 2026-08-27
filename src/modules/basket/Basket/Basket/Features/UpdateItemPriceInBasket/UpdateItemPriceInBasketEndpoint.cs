@@ -1,4 +1,4 @@
-﻿namespace Basket.Features.UpdateItemPriceInBasket;
+﻿namespace Basket.Basket.Features.AddItemToBasket;
 
 public record UpdateItemPriceInBasketRequest(decimal Price);
 public record UpdateItemPriceInBasketResponse(bool IsSuccess);

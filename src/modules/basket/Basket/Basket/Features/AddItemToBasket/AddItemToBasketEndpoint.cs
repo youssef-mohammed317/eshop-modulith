@@ -1,6 +1,5 @@
 ﻿// Add your DTO namespace here
-
-namespace Basket.Features.AddItemToBasket;
+namespace Basket.Basket.Features.AddItemToBasket;
 
 // The request body only needs to contain the item details
 public record AddItemToBasketRequest(ShoppingCartItemDto ShoppingCartItem);

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Basket.Features.DeleteBasket;
+namespace Basket.Basket.Features.AddItemToBasket;
 
 public record DeleteBasketCommand(string UserName) : ICommand<DeleteBasketResult>;
 public record DeleteBasketResult(bool IsSuccess);

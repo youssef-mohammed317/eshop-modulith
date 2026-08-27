@@ -14,3 +14,4 @@ global using Shared.DDD;
 global using Basket.Data.Repository;
 global using Catalog.Contracts.Products.Exceptions;
 global using Catalog.Contracts.Products.Features.GetProductById;
+global using Basket.Basket.Features.AddItemToBasket;

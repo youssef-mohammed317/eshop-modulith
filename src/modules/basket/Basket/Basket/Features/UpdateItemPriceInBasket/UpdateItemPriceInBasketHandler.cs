@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Basket.Features.UpdateItemPriceInBasket;
+namespace Basket.Basket.Features.AddItemToBasket;
 
 public record UpdateItemPriceInBasketCommand(Guid ProductId, decimal Price)
     : ICommand<UpdateItemPriceInBasketResult>;

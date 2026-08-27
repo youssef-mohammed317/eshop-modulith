@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Basket.Features.StoreBasket;
+namespace Basket.Basket.Features.AddItemToBasket;
 
 public record StoreBasketCommand(ShoppingCartDto Cart) : ICommand<StoreBasketResult>;
 public record StoreBasketResult(string UserName);

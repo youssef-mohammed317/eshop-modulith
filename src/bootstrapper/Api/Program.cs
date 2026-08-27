@@ -25,12 +25,13 @@ try
         options.Configuration = builder.Configuration.GetConnectionString("Redis");
     });
 
-    builder.Services.AddMessageBrokerWithAssemblies(builder.Configuration, catalogAssembly, basketAssembly);
 
     builder.Services
         .AddCatalogModule(builder.Configuration)
         .AddBasketModule(builder.Configuration)
         .AddOrderingModule(builder.Configuration);
+
+    builder.Services.AddMessageBrokerWithAssemblies(builder.Configuration, catalogAssembly, basketAssembly, orderAssembly);
 
     builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 

@@ -1,0 +1,23 @@
+﻿global using Shared.DDD;
+global using Shared.Contracts.CQRS;
+global using Shared.Contracts.Exceptions;
+global using FluentValidation;
+global using Carter;
+global using Mapster;
+global using MediatR;
+global using Microsoft.AspNetCore.Builder;
+global using Microsoft.AspNetCore.Http;
+global using Microsoft.AspNetCore.Routing;
+global using Shared.Pagination;
+global using Shared.Messaging.Events;
+global using Ordering.Ordering.Models;
+global using Ordering.Ordering.ValueObjects;
+global using Ordering.Ordering.Enums;
+global using Ordering.Ordering.Events;
+global using Ordering.Ordering.Extensions;
+global using Ordering.Data;
+global using Ordering.Ordering.Dtos;
+global using Ordering.Exceptions;
+global using Ordering.Ordering.Features.CreateOrder;
+global using Ordering.Features.GetOrderById;
+

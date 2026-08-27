@@ -1,4 +1,4 @@
-﻿namespace Basket.Features.RemoveItemFromBasket;
+﻿namespace Basket.Basket.Features.AddItemToBasket;
 
 //public record RemoveItemFromBasketRequest(Guid ProductId);
 public record RemoveItemFromBasketResponse(bool IsSuccess);

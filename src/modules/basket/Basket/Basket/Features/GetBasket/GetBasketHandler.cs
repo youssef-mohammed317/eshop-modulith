@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Basket.Features.GetBasket;
+namespace Basket.Basket.Features.AddItemToBasket;
 
 public record GetBasketQuery(string UserName) : IQuery<GetBasketResult>;
 public record GetBasketResult(ShoppingCartDto Cart);

@@ -15,10 +15,4 @@
 		<PackageReference Include="Scrutor" Version="7.0.0" />
 	</ItemGroup>
 
-
-	<ItemGroup>
-		<Folder Include="Dtos\" />
-		<Folder Include="Features\UpdateItemPriceInBasket\" />
-	</ItemGroup>
-
 </Project>

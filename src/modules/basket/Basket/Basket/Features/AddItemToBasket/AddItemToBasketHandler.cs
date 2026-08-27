@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace Basket.Features.AddItemToBasket;
+namespace Basket.Basket.Features.AddItemToBasket;
 
 public record AddItemToBasketCommand(
     string UserName,
