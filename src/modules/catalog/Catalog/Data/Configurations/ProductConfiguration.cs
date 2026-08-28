@@ -27,7 +27,10 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
             .HasColumnType("decimal(18,2)"); // Crucial for precise monetary values
 
         // 3. Encapsulated Collection Mapping
-        builder.Property(p => p.Category).IsRequired();
+        builder.PrimitiveCollection<List<string>>("_categories")
+            .HasColumnName("Category")
+            .ElementType(e => e.HasMaxLength(100))
+            .IsRequired();
 
     }
 }

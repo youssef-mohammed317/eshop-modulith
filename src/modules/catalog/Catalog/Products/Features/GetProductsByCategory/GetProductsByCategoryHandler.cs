@@ -24,7 +24,7 @@ public class GetProductsByCategoryQueryHandler(CatalogDbContext context)
         // EF Core 8 natively translates this .Contains() to a PostgreSQL Array search (ANY)
         var products = await context.Products
             .AsNoTracking()
-            .Where(p => p.Category.Contains(query.Category))
+            .Where(p => EF.Property<List<string>>(p, "_categories").Contains(query.Category))
             .OrderBy(p => p.Name)
             .ToListAsync(cancellationToken);
 

@@ -1,7 +1,7 @@
 ﻿namespace Catalog.Products.Features.GetProducts;
 
 //public record GetProductsRequest(PaginatedRequest PaginatedRequest);
-public record GetProductsResponse(IEnumerable<ProductDto> ProductDtos);
+public record GetProductsResponse(PaginatedResult<ProductDto> PaginatedResult);
 
 public class GetProductsEndPoint : ICarterModule
 {

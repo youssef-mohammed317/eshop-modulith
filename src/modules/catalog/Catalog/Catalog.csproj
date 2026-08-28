@@ -13,6 +13,8 @@
 		<ProjectReference Include="..\..\..\shared\Shared\Shared.csproj" />
 		<ProjectReference Include="..\Catalog.Contracts\Catalog.Contracts.csproj" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+			<PackageReference Include="Carter" Version="10.0.0" />
+
 	</ItemGroup>
 
 </Project>
