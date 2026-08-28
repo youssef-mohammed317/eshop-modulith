@@ -1,3 +1,4 @@
+using Microsoft.FeatureManagement;
 using Serilog;
 using Shared.Messaging.Extensions;
 
@@ -34,6 +35,16 @@ try
     builder.Services.AddMessageBrokerWithAssemblies(builder.Configuration, catalogAssembly, basketAssembly, orderAssembly);
 
     builder.Services.AddExceptionHandler<CustomExceptionHandler>();
+    builder.Services.AddFeatureManagement();
+
+    builder.Services.AddKeycloakWebApiAuthentication(builder.Configuration, options =>
+    {
+        options.TokenValidationParameters.ValidIssuers = new[]
+        {
+        "http://localhost:9090/realms/eshop-realm",
+        "http://keycloak:8080/realms/eshop-realm"
+    };
+    }); builder.Services.AddAuthorization();
 
     var app = builder.Build();
 
@@ -42,6 +53,9 @@ try
 
     // 2. Logging (Captures requests and bubbles exceptions to the handler)
     app.UseSerilogRequestLogging();
+
+    app.UseAuthentication();
+    app.UseAuthorization();
 
     // 3. Module Initialization (Runs migrations, seeding, etc. before taking traffic)
     app

@@ -1,10 +1,4 @@
-﻿using Basket.Data; // Ensure this matches your namespace for BasketDbContext
-using Basket.Data.Repository;
-using BuildingBlocks.Messaging.Events;
-using FluentValidation;
-using Mapster;
-using MassTransit;
-using Shared.CQRS;
+﻿using BuildingBlocks.Messaging.Events;
 using Shared.Messaging.Outbox;
 using System.Text.Json;
 

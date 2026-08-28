@@ -14,6 +14,7 @@ public class GetOrdersEndpoint : ICarterModule
             return Results.Ok(new GetOrdersResponse(result.Orders));
         })
         .WithName("GetOrders")
-        .Produces<GetOrdersResponse>(StatusCodes.Status200OK);
+        .Produces<GetOrdersResponse>(StatusCodes.Status200OK)
+        .RequireAuthorization();
     }
 }

@@ -14,13 +14,12 @@ public class OutboxProcessorBackgroundService(
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        // Executes the loop every 5 seconds
-        using var timer = new PeriodicTimer(TimeSpan.FromSeconds(20));
 
-        while (!stoppingToken.IsCancellationRequested && await timer.WaitForNextTickAsync(stoppingToken))
+        while (!stoppingToken.IsCancellationRequested)
         {
             await ProcessOutboxMessagesAsync(stoppingToken);
 
+            await Task.Delay(20000);
 
         }
     }
