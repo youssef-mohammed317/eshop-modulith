@@ -22,5 +22,6 @@ services:
 
 volumes:
   postgres_eshopdb:
-  rabbitmq_data:
   seq_data:
+  rabbitmq_data:
+  redis_data:

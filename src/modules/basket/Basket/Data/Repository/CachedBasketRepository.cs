@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
-using Basket.Basket.Models; // Domain models
-using Basket.Features; // Wherever your DTOs live
+using Basket.Basket.Models;
+using Basket.Features;
 using Microsoft.Extensions.Caching.Distributed;
 
 namespace Basket.Data.Repository;
@@ -13,44 +13,41 @@ public class CachedBasketRepository(IBasketRepository repository, IDistributedCa
 
         if (!string.IsNullOrEmpty(cachedString))
         {
-            // 1. Deserialize into the DTO, which System.Text.Json can handle easily
             var dto = JsonSerializer.Deserialize<ShoppingCartDto>(cachedString);
 
             if (dto is not null)
             {
-                // 2. Reconstruct the Rich Domain Model using your encapsulated methods
                 var cachedCart = ShoppingCart.Create(dto.Id, dto.UserName);
 
                 foreach (var item in dto.Items)
                 {
-                    cachedCart.AddItem(item.ProductId, item.Quantity, item.Color, item.Price, item.ProductName);
+                    // LoadItem preserves the item's real Id, instead of AddItem's
+                    // behavior of always minting a brand-new random one.
+                    cachedCart.LoadItem(item.Id, item.ProductId, item.Quantity, item.Color, item.Price, item.ProductName);
                 }
 
                 return cachedCart;
             }
         }
 
-        // Cache miss: go to the database
         var basket = await repository.GetBasketAsync(userName, cancellationToken);
 
         if (basket is not null)
         {
-            // Map Domain to DTO before caching
             await CacheBasketAsync(basket, cancellationToken);
         }
 
         return basket;
     }
 
-    public async Task<ShoppingCart> StoreBasketAsync(ShoppingCart basket, CancellationToken cancellationToken = default)
+    public async Task<ShoppingCart> CreateBasketAsync(ShoppingCart basket, CancellationToken cancellationToken = default)
     {
-        // 1. Save to Database via the EF Core Repository
-        var updatedBasket = await repository.StoreBasketAsync(basket, cancellationToken);
+        return await repository.CreateBasketAsync(basket, cancellationToken);
+    }
 
-        // 2. Update the cache using the DTO
-        await CacheBasketAsync(updatedBasket, cancellationToken);
-
-        return updatedBasket;
+    public async Task<ShoppingCart> UpdateBasketAsync(ShoppingCart basket, CancellationToken cancellationToken = default)
+    {
+        return await repository.UpdateBasketAsync(basket, cancellationToken);
     }
 
     public async Task<bool> DeleteBasketAsync(string userName, CancellationToken cancellationToken = default)
@@ -70,10 +67,8 @@ public class CachedBasketRepository(IBasketRepository repository, IDistributedCa
         await repository.SaveChangesAsync(userName, cancellationToken);
         if (userName != null)
             await cache.RemoveAsync(userName, cancellationToken);
-
     }
 
-    // Helper method to handle the Domain -> DTO -> Json string mapping
     private async Task CacheBasketAsync(ShoppingCart basket, CancellationToken cancellationToken)
     {
         var dto = new ShoppingCartDto(

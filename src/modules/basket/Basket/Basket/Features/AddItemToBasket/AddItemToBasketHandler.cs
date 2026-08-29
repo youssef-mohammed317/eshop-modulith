@@ -25,8 +25,9 @@ public class AddItemToBasketCommandHandler(IBasketRepository repository, ISender
     public async Task<AddItemToBasketResult> Handle(AddItemToBasketCommand command, CancellationToken cancellationToken)
     {
         var cart = await repository.GetBasketAsync(command.UserName, cancellationToken);
+        var isNewCart = cart is null;
 
-        if (cart is null)
+        if (isNewCart)
         {
             cart = ShoppingCart.Create(Guid.NewGuid(), command.UserName);
         }
@@ -38,20 +39,22 @@ public class AddItemToBasketCommandHandler(IBasketRepository repository, ISender
             throw new ProductNotFoundException(command.ShoppingCartItem.ProductId);
         }
 
-
-        cart.AddItem(
+        cart!.AddItem(
             command.ShoppingCartItem.ProductId,
             command.ShoppingCartItem.Quantity,
             command.ShoppingCartItem.Color,
             result.Product.Price,
             result.Product.Name);
-        //command.ShoppingCartItem.Price,
-        //command.ShoppingCartItem.ProductName);
 
-        // This stores the basket in EF Core AND updates Redis
-        await repository.StoreBasketAsync(cart, cancellationToken);
+        if (isNewCart)
+        {
+            await repository.CreateBasketAsync(cart, cancellationToken);
+        }
+        else
+        {
+            await repository.UpdateBasketAsync(cart, cancellationToken);
+        }
 
-        // This persists the database transaction
         await repository.SaveChangesAsync(command.UserName, cancellationToken);
 
         return new AddItemToBasketResult(cart.Id);

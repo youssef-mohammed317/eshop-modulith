@@ -77,4 +77,10 @@ public class ShoppingCart : Aggregate<Guid>
             item.UpdatePrice(newPrice); // Ensure you add this internal method to ShoppingCartItem!
         }
     }
+
+    public void LoadItem(Guid id, Guid productId, int quantity, string color, decimal price, string productName)
+    {
+        var item = new ShoppingCartItem(id, this.Id, productId, quantity, color, price, productName);
+        _items.Add(item);
+    }
 }

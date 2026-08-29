@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace Basket.Basket.Features.AddItemToBasket;
 
@@ -20,16 +21,17 @@ public class UpdateItemPriceInBasketCommandValidator : AbstractValidator<UpdateI
             .WithMessage("Price must be greater than or equal to zero");
     }
 }
+
+
 public class UpdateItemPriceInBasketCommandHandler(
     BasketDbContext dbContext,
-    IBasketRepository repository)
+    IDistributedCache cache)
     : ICommandHandler<UpdateItemPriceInBasketCommand, UpdateItemPriceInBasketResult>
 {
     public async Task<UpdateItemPriceInBasketResult> Handle(
         UpdateItemPriceInBasketCommand command,
         CancellationToken cancellationToken)
     {
-        // 1. Query all carts containing the product
         var carts = await dbContext.ShoppingCarts
             .Include(c => c.Items)
             .Where(c => c.Items.Any(i => i.ProductId == command.ProductId))
@@ -40,15 +42,18 @@ public class UpdateItemPriceInBasketCommandHandler(
             return new UpdateItemPriceInBasketResult(true);
         }
 
-        // 2. Update each cart domain model and sync with cache
         foreach (var cart in carts)
         {
             cart.UpdateItemPrice(command.ProductId, command.Price);
-            await repository.StoreBasketAsync(cart, cancellationToken);
         }
 
-        // 3. Persist database changes
-        await repository.SaveChangesAsync(null, cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        // Invalidate each affected user's cache entry individually
+        foreach (var cart in carts)
+        {
+            await cache.RemoveAsync(cart.UserName, cancellationToken);
+        }
 
         return new UpdateItemPriceInBasketResult(true);
     }
